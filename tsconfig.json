@@ -3,6 +3,16 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    // Path Alias
+    "baseUrl": "./",
+    "paths": {
+      "@dashboard/*": ["src/app/admin-dashboard/*"],
+      "@auth/*": ["src/app/auth/*"],
+      "@products/*": ["src/app/products/*"],
+      "@store-front/*": ["src/app/store-front/*"],
+      "@shared/*": ["src/app/shared/*"],
+    },
+    // ---------
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
