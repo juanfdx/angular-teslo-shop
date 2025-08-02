@@ -28,6 +28,7 @@ export class ProductsService {
   private productCache = new Map<string, Product>();
 
 
+  //GET ALL PRODUCTS
   getProducts(options?: Options): Observable<ProductResponse> {
     // console.log(this.productsCache);
     
@@ -57,8 +58,8 @@ export class ProductsService {
   }
 
 
+  //GET PRODUCT BY SLUG
   getProductByIdSlug(idSlug: string): Observable<Product> {
-
     const key = idSlug;
 
     if (this.productCache.has(key)) {
@@ -69,12 +70,72 @@ export class ProductsService {
       .pipe(
         // tap(console.log),
         delay(1000),
-        tap(resp => this.productCache.set(key, resp))
+        tap(product => this.productCache.set(key, product))
       )
   }
 
 
+  //GET PRODUCT BY ID
+  getProductById(id: string): Observable<Product> {
+    if (this.productCache.has(id)) {
+      return of(this.productCache.get(id)!);
+    }
+
+    return this.http.get<Product>(`${baseUrl}/products/${id}`)
+      .pipe(
+        tap(product => this.productCache.set(id, product))
+      )
+  }
 
 
+  //UPDATE PRODUCT
+  updateProduct(id: string, productLike: Partial<Product>): Observable<Product> {
+    return this.http.patch<Product>(`${baseUrl}/products/${id}`, productLike)
+      .pipe(
+        tap(product => this.updateCache(product))
+      )
+  }
 
+
+  //UPDATE CACHE METHOD - to update the cache always when a product is updated, created or deleted
+  updateCache(product: Product) {
+    const productId = product.id;
+
+    // update the cache product
+    this.productCache.set(productId, product);
+
+    // update the cache products - inefficient foreach loop never stops
+    // this.productsCache.forEach((productResponse, key) => {
+    //   this.productsCache.set(key, {
+    //     ...productResponse,
+    //     products: productResponse.products.map(p => p.id === productId ? product : p)
+    //   })
+    // })
+
+    // update the cache products - more efficient
+    for (const [key, productResponse] of this.productsCache) {
+      const index = productResponse.products.findIndex(p => p.id === productId);
+      
+      if (index !== -1) {
+        const updatedProducts = [...productResponse.products];
+        updatedProducts[index] = product;
+
+        this.productsCache.set(key, {
+          ...productResponse,
+          products: updatedProducts
+        });
+
+        break; // Stop iteration after updating
+      }
+    }
+
+  /*  
+    ✅ What for of loop Does Better:
+    - findIndex locates the product in each array quickly.
+    - Only the first matching cache entry is updated.
+    - break prevents unnecessary looping.
+    - set() keeps the cache up to date.
+    - Immutable update via [...] ensures Angular change detection works well if relevant.
+  */
+  }
 }

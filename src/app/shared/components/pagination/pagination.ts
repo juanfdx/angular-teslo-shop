@@ -9,6 +9,8 @@ import { RouterLink } from '@angular/router';
 })
 
 export class Pagination {
+  addHtmlMargin = input<boolean>(true);
+  small = input<boolean>(false);
 
   totalPages = input<number>(0);
   currentPage = input<number>(1);

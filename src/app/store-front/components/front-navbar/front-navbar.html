@@ -42,7 +42,7 @@
       </ul>
     </div>
     <a class="btn btn-ghost text-xl font-montserrat" routerLink="/">
-      Testo <span class='text-secondary'>| Shop</span>
+      Teslo <span class='text-secondary'>| Shop</span>
     </a>
   </div>
   <div class="navbar-center hidden lg:flex">
@@ -79,9 +79,13 @@
     </ul>
   </div>
   <div class="navbar-end">
+    @if (authService.isAdmin()) {
+      <a routerLink="/admin" class='btn btn-xs sm:btn-sm btn-success mr-4'>Admin Panel</a>
+    }
+
     @if (authService.authStatus() === 'authenticated') {
-      <button class='btn btn-ghost mr-2'>{{ authService.user()?.fullName }}</button>
-      <button class="btn btn-sm btn-error" (click)="authService.logout()">Logout</button>
+      <button class='btn btn-xs sm:btn-sm btn-outline mr-2'>{{ authService.user()?.fullName }}</button>
+      <button class="btn btn-xs sm:btn-sm btn-error" (click)="authService.logout()">Log out</button>
     }
     @else if (authService.authStatus() === 'not-authenticated') {
       <a class="btn btn-secondary" routerLink="/auth/login">Login</a>

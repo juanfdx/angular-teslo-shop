@@ -1,0 +1,26 @@
+
+<h1 class='text-2xl font-bold'>Products List</h1>
+<h3 class='text-lg'>
+  Total: 
+  <span class='text-accent'>{{ productsResource.value()?.count }}</span>
+</h3>
+
+<div class='divider'></div>
+
+<div class='flex justify-between items-center gap-2 mb-5'>
+  <select #txtSelect (change)="onSelectChange(txtSelect.value)" class='select select-sm select-bordered w-32' >
+    <option value="10">10</option>
+    <option value="20">20</option>
+    <option value="30">30</option>
+    <option value="40">40</option>
+  </select>
+  
+  <pagination 
+    [totalPages]="productsResource.value()?.pages ?? 0" 
+    [currentPage]="currentPage()"
+    [addHtmlMargin]="false" 
+    [small]="true"
+  />
+  
+</div>
+<product-table [products]="productsResource.value()?.products ?? []" />

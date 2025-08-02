@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import type { AuthResponse } from '@auth/interfaces/auth-response.interface';
 import type { User } from '@auth/interfaces/user.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 type AuthStatus = 'checking' | 'not-authenticated' | 'authenticated';
 const baseUrl = environment.baseUrl;
@@ -21,6 +22,7 @@ export class AuthService {
   private _token = signal<string | null>(localStorage.getItem('token'));
 
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   authStatus = computed<AuthStatus>(() => {
     if (this._authStatus() === 'checking') return 'checking';
@@ -31,6 +33,7 @@ export class AuthService {
   // GETTERS
   user  = computed<User | null>(() => this._user());
   token = computed<string | null>(() => this._token());
+  isAdmin = computed<boolean>(() => this._user()?.roles.includes('admin') ?? false);
 
 
   checkStatusResource = rxResource({
@@ -62,7 +65,7 @@ export class AuthService {
     );
   }
 
-
+  // cache the auth status of the user can be implemented
   checkAuthStatus(): Observable<boolean> {
     const token = localStorage.getItem('token');
 
@@ -83,11 +86,13 @@ export class AuthService {
   }
 
 
-  logout() {
+  logout(redirect: boolean = false) {
     this._authStatus.set('not-authenticated');
     this._user.set(null);
     this._token.set(null);
     localStorage.clear();
+
+    if (redirect) this.router.navigateByUrl('/');
   }
 
 
@@ -99,6 +104,7 @@ export class AuthService {
     localStorage.setItem('token', resp.token);
     return true;
   }
+
 
   private handleAuthError(error: any) {
     this.logout();

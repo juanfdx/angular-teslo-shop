@@ -1,8 +1,8 @@
 
-<div class="join flex justify-center items-center mt-10 mb-20">
+<div [class]="`join flex justify-center items-center ${addHtmlMargin() ? 'mt-10 mb-20' : ''} `">
   @for (page of getPagesNumbers(); track page) {
     <button 
-      class="join-item btn"
+      [class]="`join-item btn ${small() ? 'btn-sm' : ''}`"
       [class.btn-primary]="page === activePage()"
       [routerLink]="[]"
       [queryParams]="{ page: page }"

@@ -11,6 +11,7 @@
       "@products/*": ["src/app/products/*"],
       "@store-front/*": ["src/app/store-front/*"],
       "@shared/*": ["src/app/shared/*"],
+      "@utils/*": ["src/app/utils/*"],
     },
     // ---------
     "strict": true,

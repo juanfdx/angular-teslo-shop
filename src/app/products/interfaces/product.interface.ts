@@ -9,9 +9,9 @@ export interface ProductResponse {
 export interface Product {
   id:          string;
   title:       string;
-  price:       number;
   description: string;
   slug:        string;
+  price:       number;
   stock:       number;
   sizes:       Size[];
   gender:      Gender;
@@ -34,7 +34,6 @@ export enum Size {
   L    = "L",
   XL   = "XL",
   XXL  = "XXL",
-  XXXL = "XXXL",
 }
 
 
