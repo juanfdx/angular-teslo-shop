@@ -8,19 +8,28 @@
 <div class='divider'></div>
 
 <div class='flex justify-between items-center gap-2 mb-5'>
-  <select #txtSelect (change)="onSelectChange(txtSelect.value)" class='select select-sm select-bordered w-32' >
-    <option value="10">10</option>
-    <option value="20">20</option>
-    <option value="30">30</option>
-    <option value="40">40</option>
-  </select>
-  
-  <pagination 
+  <div class='flex items-center gap-4'>  
+    <pagination 
     [totalPages]="productsResource.value()?.pages ?? 0" 
     [currentPage]="currentPage()"
     [addHtmlMargin]="false" 
     [small]="true"
-  />
+    />
+    <select #txtSelect (change)="onSelectChange(txtSelect.value)" class='select select-sm select-bordered w-32' >
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option value="40">40</option>
+    </select>
+  </div>
   
+  <button 
+    class='btn btn-sm btn-primary'
+    [routerLink]="['/admin/product/new']" 
+    type='button' 
+  >
+    New Product
+  </button>
 </div>
+
 <product-table [products]="productsResource.value()?.products ?? []" />

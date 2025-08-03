@@ -1,6 +1,6 @@
 
 <!-- Slider main container -->
-<div #swiperDiv class="swiper">
+<div #swiperDiv class="swiper" [style]="{'height': '100%'}">
   <!-- Additional required wrapper -->
   <div class="swiper-wrapper">
     <!-- Slides -->
@@ -9,15 +9,23 @@
          <img [src]="image | productImage" alt='product' />
        </div>
      }
+     @empty {
+       <div class="swiper-slide animate-fadeIn">
+        <img [src]="images() | productImage" alt='product' />
+       </div>
+     }
  
   </div>
-  <!-- If we need pagination -->
-  <div class="swiper-pagination"></div>
 
-  <!-- If we need navigation buttons -->
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-button-next"></div>
-
-  <!-- If we need scrollbar -->
-  <div class="swiper-scrollbar"></div>
+  @if (images().length > 1) {
+    <!-- If we need pagination -->
+    <div class="swiper-pagination"></div>
+  
+    <!-- If we need navigation buttons -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  
+    <!-- If we need scrollbar -->
+    <div class="swiper-scrollbar"></div>
+  }
 </div>

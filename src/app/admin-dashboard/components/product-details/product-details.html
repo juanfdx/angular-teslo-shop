@@ -3,12 +3,40 @@
 <div class="divider"></div>
 
 <form 
-  class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+  class="grid grid-cols-1 md:grid-cols-2 gap-4"
   [formGroup]="productForm"
   (ngSubmit)="onSubmit()"
 >
+  <!-- Images slider -->
+  <div class="flex flex-col gap-2 md:order-2">
+    <div class="flex justify-end h-12">
+      <button class="btn btn-secondary" type="submit">
+        <!-- <span class="loading loading-spinner loading-sm"></span> -->
+        Save
+      </button>
+    </div>
+
+    <product-slider [images]="product().images" />
+
+    <!-- File input -->
+    <input 
+      class="file-input file-input-bordered w-full mt-4" 
+      type="file" 
+      multiple
+      accept='image/*'
+      (change)="onFilesSelected($event)"
+    />
+
+    <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4'>
+      @for (image of tempImages(); track image) {
+        <img class='w-full object-cover' [src]="image" alt="temp image">
+      }
+    </div>
+
+  </div>
+
   <!-- General data -->
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 md:order-1">
     <h2 class="text-2xl font-bold h-12">General data</h2>
     <input 
       type="text" 
@@ -70,8 +98,8 @@
       class="input input-bordered w-full"
       formControlName="tags"  
       [class.border-red-500]="productForm.get('tags')?.errors ?? false"
-    />
-    <form-error-label [control]="productForm.get('tags')!" />
+      />
+      <form-error-label [control]="productForm.get('tags')!" />
 
     <!-- Gender buttons -->
     <div class="grid grid-cols-4 gap-2">
@@ -125,17 +153,4 @@
     </div>
   </div>
 
-  <!-- Images -->
-  <div class="flex flex-col gap-2">
-    <div class="flex justify-end h-12">
-      <button class="btn btn-secondary" type="submit">
-        <!-- <span class="loading loading-spinner loading-sm"></span> -->
-        Save
-      </button>
-    </div>
-
-    <product-slider [images]="product().images" />
-
-    <input type="file" class="file-input file-input-bordered w-full mt-4" />
-  </div>
 </form>

@@ -1,10 +1,11 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import type { Product } from '@products/interfaces/product.interface';
 import { ProductSlider } from "@products/components/product-slider/product-slider";
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '@utils/form-utils';
 import { FormErrorLabel } from "@shared/components/form-error-label/form-error-label";
 import { ProductsService } from '@products/services/products.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -14,13 +15,22 @@ import { ProductsService } from '@products/services/products.service';
 })
 
 export class ProductDetails implements OnInit {
-
-  productService = inject(ProductsService);
-
   product = input.required<Product>();
+  wasSaved = output<string | null>();
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
+  //images
+  tempImages = signal<string[]>([]);
+  imageFileList: FileList | undefined = undefined;
+  // imagesToSlider = computed(() => {
+  //   return [...this.tempImages(), ...this.product().images];
+  // });
+
+  router = inject(Router);
   fb = inject(FormBuilder);
+  
+  productService = inject(ProductsService);
+
 
   productForm = this.fb.group({
     title : ['', [Validators.required, Validators.minLength(3)]],
@@ -69,10 +79,44 @@ export class ProductDetails implements OnInit {
       tags: formValue.tags?.toLowerCase().split(',').map(tag => tag.trim())
     };
 
-    this.productService.updateProduct(this.product().id, productLike).subscribe(
-      product => {
-        console.log('Product updated', product); 
-      }
-    )
+    if (this.product().id === 'new') {
+      // create new product
+      this.productService.createProduct(productLike, this.imageFileList).subscribe(
+        product => {
+          console.log('Product created');  
+          this.wasSaved.emit('Product created!');
+          // setTimeout(() => this.wasSaved.emit(null), 3000);
+          
+          // when redirect component is destroyed so setTimeout is not executed 
+          this.router.navigate(['/admin/product', product.id]);
+          
+        }
+      )
+      
+    }
+    else {
+      // update the product
+      this.productService.updateProduct(this.product().id, productLike, this.imageFileList).subscribe(
+        product => {
+          console.log('Product updated'); 
+          this.wasSaved.emit('Product updated!');
+        }
+      )
+    }
   }
+
+
+  // IMAGES
+  onFilesSelected(event: Event) {
+    const fileList = (event.target as HTMLInputElement).files; // FileList object
+    this.tempImages.set([]); // clear temp images
+    this.imageFileList = fileList ?? undefined;
+
+    const imageUrls = Array.from(fileList ?? []).map(
+      file => URL.createObjectURL(file)
+    );
+
+    this.tempImages.set(imageUrls);
+  }
+
 }

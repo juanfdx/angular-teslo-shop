@@ -21,12 +21,12 @@ import { ProductImagePipe } from '@products/pipes/product-image.pipe';
 
 
 export class ProductSlider implements AfterViewInit {
-
   images = input.required<string[]>();
   swiperDiv = viewChild.required<ElementRef>('swiperDiv');
 
   
   ngAfterViewInit(): void {
+    
     const element = this.swiperDiv().nativeElement;
     
     if (!element) return;
